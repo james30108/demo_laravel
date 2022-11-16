@@ -34,6 +34,7 @@ return new class extends Migration
             $table->string('member_image_bank')->nullable()->comment('รูปบัญชีธนาคาร');
             $table->integer('member_lang')->default(0)->comment('ภาษาในระบบ');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

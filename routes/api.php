@@ -23,6 +23,6 @@ Route::controller(AuthController::class)->group(function(){
 
 Route::group(['middleware' => ['auth:sanctum']], function() {
   Route::post('/logout', [AuthController::class, 'logout']);
+  Route::get('/me', [AuthController::class, 'me']);
 });
 
- Route::get('/me', [AuthController::class, 'me']);
