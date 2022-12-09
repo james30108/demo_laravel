@@ -6,7 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
+// use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
@@ -42,9 +42,16 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    // join to member_system
     public function member()
     {
         return $this->hasOne(Member::class);
+    }
+
+    // join to admin_system
+    public function admin()
+    {
+        return $this->hasOne(Admin::class);
     }
 
 }

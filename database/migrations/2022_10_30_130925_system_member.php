@@ -15,7 +15,8 @@ return new class extends Migration
     {
         Schema::create('system_member', function (Blueprint $table) {
             $table->id();
-            $table->integer('member_id')->comment('ไอดีสมาชิก')->unsigned();
+            $table->string('member_name');
+            $table->string('member_email')->unique();
             $table->string('member_title_name')->nullable()->comment('คำนำหน้านาม');
             $table->string('member_code')->nullable()->comment('รหัสสมาชิก');
             $table->string('member_tel')->nullable()->comment('เบอร์โทรฯ');
@@ -23,7 +24,7 @@ return new class extends Migration
             $table->string('member_bank_own')->nullable()->comment('ชื่อเจ้าของบัญชี');
             $table->string('member_bank_id')->nullable()->comment('หมายเลขบัญชีฯ');
             $table->integer('member_class')->default(0)->comment('ตำแหน่ง');
-            $table->string('member_code_id')->nullable()->comment('รหัสบัตรประชาชน');
+            $table->string('member_code_id')->nullable()->comment('รหัสบัตรประชาชน')->unique();
             $table->string('member_token_line')->nullable()->comment('ไลน์โทเค่น');
             $table->integer('member_status')->default(0)->comment('สถานะการใช้งาน');
             $table->float('member_point', 8, 2)->default(0)->comment('คำแนน');
@@ -33,8 +34,11 @@ return new class extends Migration
             $table->string('member_image_card')->nullable()->comment('รูปประชาชน');
             $table->string('member_image_bank')->nullable()->comment('รูปบัญชีธนาคาร');
             $table->integer('member_lang')->default(0)->comment('ภาษาในระบบ');
+            $table->string('password');
             $table->timestamps();
-            $table->softDeletes();
+            $table->rememberToken();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->softDeletes($column = 'deleted_at', $precision = 0);
         });
     }
 

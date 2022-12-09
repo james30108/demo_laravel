@@ -1,0 +1,27 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Address extends Model
+{
+    use HasFactory;
+
+    protected $table = 'system_member';
+    protected $fillable = [
+        'address_member',
+        'address_detail',
+        'address_district',
+        'address_amphure',
+        'address_zipcode',
+        'address_type',
+    ];
+
+    // join from users
+    public function member()
+    {
+        return $this->belongsTo(Member::class);
+    }
+}

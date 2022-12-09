@@ -2,17 +2,22 @@
 
 namespace App\Models;
 
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Member extends Model
+class Member extends Authenticatable
 {
-    use HasFactory, SoftDeletes;
+    use HasApiTokens, HasFactory, SoftDeletes, Notifiable;
 
     protected $table = 'system_member';
     protected $fillable = [
-        'member_id',
+        'member_name',
+        'password',
+        'member_email',
         'member_title_name',
         'member_code',
         'member_tel',
@@ -32,8 +37,31 @@ class Member extends Model
         'member_lang'
     ];
 
-    public function user()
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+    ];
+
+    // join to liner_system
+    public function liner()
     {
-        return $this->belongsTo(User::class, 'member_id', 'id');
+        return $this->hasOne(Liner::class);
     }
+
+    // join from users
+    // public function user()
+    // {
+    //     return $this->belongsTo(User::class, 'member_id', 'id');
+    // }
+
+    // join to address
+    public function address()
+    {
+        return $this->hasMany(Address::class);
+    }
+
 }

@@ -4,17 +4,16 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\BaseController as BaseController;
-use App\Models\Member;
-use App\Models\Liner;
+use App\Models;
 use Validator;
 
-class MemberController extends BaseController
+class ProductTypeController extends BaseController
 {
     // Store
     public function store (Request $request)
     {
         // get data
-        $query = new Member;
+        $query = new ProductType;
         $query = $this->filter($query, $request);
 
         // return response
@@ -127,5 +126,4 @@ class MemberController extends BaseController
         // return response
         return $this->sendResponse($member, "ลบข้อมูลเรียบร้อย");
     }
-
 }
