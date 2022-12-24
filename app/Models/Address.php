@@ -9,9 +9,10 @@ class Address extends Model
 {
     use HasFactory;
 
-    protected $table = 'system_member';
+    protected $table = 'system_address';
     protected $fillable = [
-        'address_member',
+        'address_person_id',
+        'address_person_type',
         'address_detail',
         'address_district',
         'address_amphure',
@@ -22,6 +23,6 @@ class Address extends Model
     // join from users
     public function member()
     {
-        return $this->belongsTo(Member::class);
+        return $this->belongsTo(Member::class, "address_person_id");
     }
 }

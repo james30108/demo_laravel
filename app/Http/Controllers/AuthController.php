@@ -71,14 +71,14 @@ class AuthController extends BaseController
         Liner::create($liner);
 
         // address
-        $address['address_member'] 	    = $member->id;
+        $address['address_person_id'] 	= $member->id;
         $address['address_detail'] 	    = isset($input['address_detail']) 	? $input['address_detail'] 		: false;
         $address['address_province'] 	= isset($input['address_province']) ? $input['address_province'] 	: false;
         $address['address_amphure'] 	= isset($input['address_amphure']) 	? $input['address_amphure'] 	: false;
         $address['address_district'] 	= isset($input['address_district']) ? $input['address_district'] 	: false;
         $address['address_zipcode'] 	= isset($input['address_zipcode']) 	? $input['address_zipcode'] 	: false;
 
-        $address_2['address_member'] 	= $member->id;
+        $address_2['address_person_id'] = $member->id;
         $address_2['address_detail'] 	= isset($input['address_detail']) 	? $input['address_detail'] 		: false;
         $address_2['address_province'] 	= isset($input['address_province']) ? $input['address_province'] 	: false;
         $address_2['address_amphure'] 	= isset($input['address_amphure']) 	? $input['address_amphure'] 	: false;

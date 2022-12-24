@@ -4,11 +4,37 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\BaseController as BaseController;
-use App\Models;
 use Validator;
+use App\Models\ProductType;
 
 class ProductTypeController extends BaseController
 {
+    // create
+    public function create (Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'product_type_code' => 'required|unique:system_product_type,product_type_code,NULL,id',
+            'product_type_name' => 'required|unique:system_product_type,product_type_name,NULL,id',
+            // 'product_type_code' => 'required|unique:system_product_type,product_type_code,NULL,id,deleted_at,NULL',
+            // 'product_type_name' => 'required|unique:system_product_type,product_type_name,NULL,id,deleted_at,NULL',
+        ]);
+
+        if($validator->fails()){
+            return $this->sendError('Validation Error.', $validator->errors());
+        }
+
+        // insert
+        $input  = $request->all();
+        $data['product_type_code'] = $input['product_type_code'];
+        $data['product_type_name'] = $input['product_type_name'];
+        $data['product_type_detail'] = isset($input['product_type_detail']) ? $input['product_type_detail'] : null;
+
+        $success = ProductType::create($data);
+
+        // return response
+        return $this->sendResponse($success, "บันทึกข้อมูลเรียบร้อย");
+
+    }
     // Store
     public function store (Request $request)
     {
@@ -26,7 +52,7 @@ class ProductTypeController extends BaseController
     {
         // validate
         $validator = Validator::make($request->all(), [
-            'member_id' => 'required',
+            'id' => 'required',
         ]);
 
         if($validator->fails()){
@@ -34,10 +60,10 @@ class ProductTypeController extends BaseController
         }
 
         //  detail
-        $member = Member::where("member_id", $request->member_id)->first();
+        $success = ProductType::find($request->id);
 
         // response
-        return $this->sendResponse($member, "ดึงข้อมูลเรียบร้อย");
+        return $this->sendResponse($success, "ดึงข้อมูลเรียบร้อย");
     }
 
     // Update
@@ -46,7 +72,11 @@ class ProductTypeController extends BaseController
 
         // validate
         $validator = Validator::make($request->all(), [
-            'member_code' => 'required',
+            'id' => 'required',
+            'product_type_code' => 'required|unique:system_product_type,product_type_code,' . $request->id . ',id',
+            'product_type_name' => 'required|unique:system_product_type,product_type_name,' . $request->id . ',id',
+            // 'product_type_code' => 'required|unique:system_product_type,product_type_code,' . $request->id . ',id,deleted_at,NULL',
+            // 'product_type_name' => 'required|unique:system_product_type,product_type_name,' . $request->id . ',id,deleted_at,NULL',
         ]);
 
         if($validator->fails()){
@@ -54,58 +84,38 @@ class ProductTypeController extends BaseController
         }
 
         // update and get
-        $member = Member::where("id", $request->member_id)->first();
-        $result = $member->update(["member_title_name" => $request->member_title_name,
-            "member_code" => $request->member_code,
-            "member_tel" => $request->member_tel,
-            "member_bank" => $request->member_bank,
-            "member_bank_own" => $request->member_bank_own,
-            "member_bank_id" => $request->member_bank_id,
-            "member_class" => $request->member_class,
-            "member_code_id" => $request->member_code_id,
-            "member_token_line" => $request->member_token_line
+        $query = ProductType::find($request->id);
+        $query->update(["product_type_code" => $request->product_type_code,
+            "product_type_name" => $request->product_type_name,
+            "product_type_detail" => $request->product_type_detail,
         ]);
-        $success = $member->refresh();
+        $success = $query->refresh();
 
         // return response
         return $this->sendResponse($success, "บันทึกข้อมูลเรียบร้อย");
     }
 
-    // Change Password
-    public function changePassword (Request $request)
+    // Status
+    public function status (Request $request)
     {
+
         // validate
         $validator = Validator::make($request->all(), [
-            'member_id' => 'required',
-            'member_password' => 'required',
-            'member_password_new' => 'required|max:20|confirmed',
-        ]);
-
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());
-        }
-    }
-
-    // Setting Status
-    public function active (Request $request)
-    {
-        // validate
-        $validator = Validator::make($request->all(), [
-            'member_id' => 'required',
+            'id' => 'required',
         ]);
 
         if($validator->fails()){
             return $this->sendError('Validation Error.', $validator->errors());
         }
 
-        // get data and set status
-        $member = Member::where("member_id", $request->member_id)->first();
-        $member_status = $member->member_status == 0 ? 1 : 0;
-        $result = $member->update(["member_status" => $member_status]);
-        $success = $member->refresh();
+        // update and get
+        $query = ProductType::find($request->id);
+        $product_type_status = $query->product_type_status == 0 ? 1 : 0;
+        $query->update(["product_type_status" => $product_type_status]);
+        $success = $query->refresh();
 
         // return response
-        return $this->sendResponse($success, "แก้ไขสถานะการใช้งานเรียบร้อย");
+        return $this->sendResponse($success, "บันทึกข้อมูลเรียบร้อย");
     }
 
     // Delete
@@ -113,7 +123,7 @@ class ProductTypeController extends BaseController
     {
         // validate
         $validator = Validator::make($request->all(), [
-            'member_id' => 'required',
+            'id' => 'required',
         ]);
 
         if($validator->fails()){
@@ -121,9 +131,9 @@ class ProductTypeController extends BaseController
         }
 
         // Delete
-        $member = Member::find($request->member_id)->delete();
+        $query = ProductType::find($request->id)->delete();
 
         // return response
-        return $this->sendResponse($member, "ลบข้อมูลเรียบร้อย");
+        return $this->sendResponse($query, "ลบข้อมูลเรียบร้อย");
     }
 }

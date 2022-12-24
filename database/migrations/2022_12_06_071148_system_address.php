@@ -15,13 +15,15 @@ return new class extends Migration
     {
         Schema::create('system_address', function (Blueprint $table) {
             $table->id();
-            $table->integer('address_member')->comment('เชื่อมจาก member_id ในตาราง system_member');
-            $table->string('address_detail')->comment('ที่อยู่');
-            $table->string('address_district')->comment('ตำบล');
-            $table->string('address_amphure')->comment('อำเภอ');
-            $table->string('address_province')->comment('จังหวัด');
-            $table->string('address_zipcode')->comment('รหัสไปรษณีย์');
+            $table->integer('address_person_id')->default(0)->comment('id');
+            $table->integer('address_person_type')->default(0)->comment('0=member,1=buyer');
+            $table->string('address_detail')->nullable()->comment('ที่อยู่');
+            $table->string('address_district')->nullable()->comment('ตำบล');
+            $table->string('address_amphure')->nullable()->comment('อำเภอ');
+            $table->string('address_province')->nullable()->comment('จังหวัด');
+            $table->string('address_zipcode')->nullable()->comment('รหัสไปรษณีย์');
             $table->integer('address_type')->default(0)->comment('0=default, 1=จัดส่งสินค้า');
+            $table->timestamps();
         });
     }
 

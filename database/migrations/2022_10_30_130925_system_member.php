@@ -17,13 +17,14 @@ return new class extends Migration
             $table->id();
             $table->string('member_name');
             $table->string('member_email')->unique();
+            $table->string('password');
             $table->string('member_title_name')->nullable()->comment('คำนำหน้านาม');
             $table->string('member_code')->nullable()->comment('รหัสสมาชิก');
             $table->string('member_tel')->nullable()->comment('เบอร์โทรฯ');
             $table->integer('member_bank')->default(0)->comment('ไอดีธนาคาร');
             $table->string('member_bank_own')->nullable()->comment('ชื่อเจ้าของบัญชี');
             $table->string('member_bank_id')->nullable()->comment('หมายเลขบัญชีฯ');
-            $table->integer('member_class')->default(0)->comment('ตำแหน่ง');
+            $table->integer('member_position')->default(0)->comment('ตำแหน่ง');
             $table->string('member_code_id')->nullable()->comment('รหัสบัตรประชาชน')->unique();
             $table->string('member_token_line')->nullable()->comment('ไลน์โทเค่น');
             $table->integer('member_status')->default(0)->comment('สถานะการใช้งาน');
@@ -34,10 +35,9 @@ return new class extends Migration
             $table->string('member_image_card')->nullable()->comment('รูปประชาชน');
             $table->string('member_image_bank')->nullable()->comment('รูปบัญชีธนาคาร');
             $table->integer('member_lang')->default(0)->comment('ภาษาในระบบ');
-            $table->string('password');
-            $table->timestamps();
             $table->rememberToken();
             $table->timestamp('email_verified_at')->nullable();
+            $table->timestamps();
             $table->softDeletes($column = 'deleted_at', $precision = 0);
         });
     }

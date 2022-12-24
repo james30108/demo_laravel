@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('config_type')->nullable()->comment('ชื่อตัวแปร');
             $table->string('config_name')->nullable()->comment('รายละเอียด');
             $table->string('config_value')->default(0)->comment('0=ปิด,1=เปิด');
+            $table->timestamps();
         });
     }
 

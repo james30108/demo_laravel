@@ -28,6 +28,6 @@ class Liner extends Model
     // join from member_system
     public function member()
     {
-        return $this->belongsTo(Member::class, 'liner_member', 'member_id');
+        return $this->belongsTo(Member::class, "liner_member");
     }
 }

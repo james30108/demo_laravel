@@ -93,7 +93,7 @@ class ConfigSeeder extends Seeder
                 'config_name' => 'ระบบสมาชิกหน้าเว็บเพจ',
             ],
             [
-                'config_type' => 'system_class',
+                'config_type' => 'system_position',
                 'config_name' => 'ระบบตำแหน่ง',
             ],
             [

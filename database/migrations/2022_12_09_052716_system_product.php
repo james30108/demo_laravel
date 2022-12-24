@@ -28,6 +28,7 @@ return new class extends Migration
             $table->integer('product_quantity')->default(0)->comment('จำนวนสินค้า');
             $table->string('product_unit')->nullable()->comment('หน่วยสินค้า');
             $table->string('product_group')->nullable()->comment('แพ็กเกจสินค้า');
+            $table->integer('product_status')->default(0)->comment('สถานะ');
             $table->float('product_etc')->default(0)->comment('ค่าพิเศษ');
             $table->float('product_etc2')->default(0)->comment('ค่าพิเศษ2');
             $table->string('product_image_cover')->nullable()->comment('รหัสสินค้า');
@@ -37,7 +38,6 @@ return new class extends Migration
             $table->string('product_image_4')->nullable()->comment('รูปสินค้า');
             $table->string('product_image_5')->nullable()->comment('รูปสินค้า');
             $table->timestamps();
-            $table->softDeletes($column = 'deleted_at', $precision = 0);
         });
     }
 

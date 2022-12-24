@@ -24,7 +24,7 @@ class Member extends Authenticatable
         'member_bank',
         'member_bank_own',
         'member_bank_id',
-        'member_class',
+        'member_position',
         'member_code_id',
         'member_token_line',
         'member_status',
@@ -49,19 +49,25 @@ class Member extends Authenticatable
     // join to liner_system
     public function liner()
     {
-        return $this->hasOne(Liner::class);
+        return $this->hasOne(Liner::class, "liner_member");
     }
-
-    // join from users
-    // public function user()
-    // {
-    //     return $this->belongsTo(User::class, 'member_id', 'id');
-    // }
 
     // join to address
     public function address()
     {
-        return $this->hasMany(Address::class);
+        return $this->hasMany(Address::class, "address_member");
+    }
+
+    // join to transfer from
+    public function transferFrom()
+    {
+        return $this->hasMany(Transfer::class, "transfer_from");
+    }
+
+    // join to transfer to
+    public function transferTo()
+    {
+        return $this->hasMany(Transfer::class, "transfer_to");
     }
 
 }

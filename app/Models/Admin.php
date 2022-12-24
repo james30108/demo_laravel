@@ -13,7 +13,6 @@ class Admin extends Authenticatable
 
     protected $table = 'system_admin';
     protected $fillable = [
-        'admin_id',
         'admin_user',
         'password',
         'admin_name',
@@ -30,10 +29,4 @@ class Admin extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-
-    // join from users
-    // public function user()
-    // {
-    //     return $this->belongsTo(User::class, 'admin_id', 'id');
-    // }
 }

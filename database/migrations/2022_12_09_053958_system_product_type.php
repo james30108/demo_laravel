@@ -18,8 +18,8 @@ return new class extends Migration
             $table->string('product_type_code')->nullable()->comment('รหัสประเภทสินค้า');
             $table->string('product_type_name')->nullable()->comment('ชื่อประเภทสินค้า');
             $table->text('product_type_detail')->nullable()->comment('รายละเอียด');
+            $table->integer('product_type_status')->default(0)->comment('สถานะ');
             $table->timestamps();
-            $table->softDeletes($column = 'deleted_at', $precision = 0);
         });
     }
 
