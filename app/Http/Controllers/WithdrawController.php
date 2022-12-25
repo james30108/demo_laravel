@@ -13,6 +13,7 @@ class WithdrawController extends BaseController
     // Create
     public function create (Request $request)
     {
+        $withdraw_min        = $this->rule("withdraw_min");
         $withdraw_max        = $this->rule("withdraw_max");
         $system_com_withdraw = $this->rule("system_com_withdraw");
 
@@ -21,7 +22,7 @@ class WithdrawController extends BaseController
             'withdraw_bank_own' => 'required',
             'withdraw_bank'     => 'required',
             'withdraw_bank_id'  => 'required|integer',
-            'withdraw_point'    => 'required|float',
+            'withdraw_point'    => 'required|numeric|min:' . $withdraw_min,
         ]);
 
         if($validator->fails()) return $this->sendError('Validation Error.', $validator->errors());
@@ -30,7 +31,7 @@ class WithdrawController extends BaseController
         $withdraw_point      = $this->withdrawCalculate ($withdraw_full_point);
 
         // Check Point
-        $query = Liner::where(["liner_member", $request->withdraw_member])->first();
+        $query = Liner::where([["liner_member", $request->withdraw_member]])->first();
         if ($request->withdraw_point == 0) return $this->sendError('Error.', "ยอดเงินที่ถอนเป็น 0");
         if ($query->liner_point < $withdraw_full_point) return $this->sendError('Error.', "จำนวนเงินที่ถอนมีไม่เพียงพอ");
 
@@ -61,20 +62,23 @@ class WithdrawController extends BaseController
 
         $validator = Validator::make($request->all(), [
             'id'                => 'required',
-            'withdraw_status'   => 'required_with:1,2',
+            'withdraw_status'   => 'required|in:1,2',
         ]);
 
         if($validator->fails()) return $this->sendError('Validation Error.', $validator->errors());
 
         // Get Data
         $query = Withdraw::find($request->id);
+        // Check
+        if ($query->withdraw_status != 0) return $this->sendError('Error.', "รายการนี้ถูกดำเนินการไปแล้ว");
+        // Update
         $query->update(["withdraw_status" => $request->withdraw_status]);
         // Get Liner
         $liner = Liner::where("liner_member", $query->withdraw_member);
         $liner->update(["liner_status" => 1]);
 
         // If Cancel
-        if ($request->withdraw_status == 1) {
+        if ($request->withdraw_status == 2) {
             $liner->increment("liner_point", $query->withdraw_full_point);
             if ($system_com_withdraw == 2) $liner->increment("liner_withdraw_count");
         }
@@ -106,6 +110,9 @@ class WithdrawController extends BaseController
 
         // detail
         $query = Withdraw::find($request->id);
+
+        // Check
+        if ($query == null) return $this->sendError('Error.', "ไม่พบข้อมูลในระบบ");
 
         // response
         return $this->sendResponse($query, "ดึงข้อมูลเรียบร้อย");

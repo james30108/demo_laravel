@@ -4,35 +4,46 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\BaseController as BaseController;
-use App\Models\Contact;
+use App\Models\Comment;
 use Validator;
 
-class ContactController extends BaseController
+class CommentController extends BaseController
 {
+    public static $path = '/images/comments/';
+
     // create
     public function create (Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'contact_direct'        => 'required',
-            'contact_person_id'     => 'required',
-            'contact_person_type'   => 'required',
-            'contact_name'          => 'required|max:50',
-            'contact_email'         => 'required|email',
-            'contact_title'         => 'required|max:100',
-            'contact_detail'        => 'required',
+            'comment_direct'        => 'required',
+            'comment_person_id'     => 'required',
+            'comment_person_type'   => 'required',
+            'comment_type'          => 'required',
+            'comment_link'          => 'required',
+            'comment_title'         => 'required|max:100',
+            'comment_detail'        => 'required',
+            'comment_image_cover'   => 'image',
         ]);
 
         if($validator->fails()) return $this->sendError('Validation Error.', $validator->errors());
 
+        $comment_image_cover        = "";
+        if ($request->hasFile('comment_image_cover')) {
+            $image                  = $request->file('comment_image_cover');
+            $comment_image_cover    = time() . "_" . rand() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path(self::$path), $comment_image_cover);
+        }
+
         // insert
-        Contact::create([
-            "contact_direct"        => $request->contact_direct,
-            "contact_person_id"     => $request->contact_person_id,
-            "contact_person_type"   => $request->contact_person_type,
-            "contact_name"          => $request->contact_name,
-            "contact_email"         => $request->contact_email,
-            "contact_title"         => $request->contact_title,
-            "contact_detail"        => $request->contact_detail,
+        Comment::create([
+            "comment_direct"        => $request->comment_direct,
+            "comment_person_id"     => $request->comment_person_id,
+            "comment_person_type"   => $request->comment_person_type,
+            "comment_type"          => $request->comment_type,
+            "comment_link"          => $request->comment_link,
+            "comment_title"         => $request->comment_title,
+            "comment_detail"        => $request->comment_detail,
+            "comment_image_cover"   => $comment_image_cover,
         ]);
 
         // return response
@@ -43,7 +54,7 @@ class ContactController extends BaseController
     public function store (Request $request)
     {
         // get data
-        $query = new Contact;
+        $query = new Comment;
         $query = $this->filter($query, $request);
 
         // return response
@@ -62,7 +73,7 @@ class ContactController extends BaseController
         if($validator->fails()) return $this->sendError('Validation Error.', $validator->errors());
 
         //  detail
-        $query = Contact::find($request->id);
+        $query = Comment::find($request->id);
 
         // response
         return $this->sendResponse($query, "ดึงข้อมูลเรียบร้อย");
@@ -79,11 +90,11 @@ class ContactController extends BaseController
         if($validator->fails()) return $this->sendError('Validation Error.', $validator->errors());
 
         // get data
-        $query = Contact::find($request->id);
+        $query = Comment::find($request->id);
         // check status
-        if ($query->contact_status == 1) return $this->sendError('Error.', "ข้อความนี้ถูกอ่านไปแล้ว");
+        if ($query->comment_status == 1) return $this->sendError('Error.', "ข้อความนี้ถูกอ่านไปแล้ว");
         // update
-        $query->update(["contact_status" => 1]);
+        $query->update(["comment_status" => 1]);
         // return response
         return $this->sendResponse($query, "บันทึกข้อมูลเรียบร้อย");
     }
@@ -99,7 +110,7 @@ class ContactController extends BaseController
         if($validator->fails()) return $this->sendError('Validation Error.', $validator->errors());
 
         // Delete
-        $query = Contact::find($request->id)->delete();
+        $query = Comment::find($request->id)->delete();
 
         // return response
         return $this->sendResponse($query, "ลบข้อมูลเรียบร้อย");

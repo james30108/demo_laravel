@@ -19,6 +19,11 @@ use App\Http\Controllers\TransferController;
 use App\Http\Controllers\WithdrawController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\PositionController;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\ThreadController;
+use App\Http\Controllers\ThreadTypeController;
+use App\Http\Controllers\TrackingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -98,6 +103,7 @@ Route::group(['middleware' => ['auth:sanctum', 'ability:admin']], function() {
     Route::controller(ReportController::class)->prefix('report')->group(function () {
         Route::post('/sale', 'sale');
         Route::post('/commission', 'commission');
+        Route::post('/withdraw', 'withdraw');
     });
 
     Route::controller(CompanyController::class)->prefix('company')->group(function () {
@@ -120,8 +126,44 @@ Route::group(['middleware' => ['auth:sanctum', 'ability:admin']], function() {
         Route::post('/status', 'status');
     });
 
-});
+    Route::controller(ContactController::class)->prefix('contact')->group(function () {
+        Route::post('/delete', 'delete');
+    });
 
+    Route::controller(CommentController::class)->prefix('comment')->group(function () {
+        Route::post('/delete', 'delete');
+    });
+
+    Route::controller(ThreadController::class)->prefix('thread')->group(function () {
+        Route::post('/create', 'create');
+        Route::post('/update', 'update');
+        Route::post('/delete', 'delete');
+    });
+
+    Route::controller(ThreadTypeController::class)->prefix('thread_type')->group(function () {
+        Route::post('/create', 'create');
+        Route::post('/store', 'store');
+        Route::post('/detail', 'detail');
+        Route::post('/update', 'update');
+        Route::post('/delete', 'delete');
+    });
+
+    Route::controller(NotificationController::class)->prefix('notification')->group(function () {
+        Route::post('/create', 'create');
+        Route::post('/store', 'store');
+        Route::post('/update', 'update');
+        Route::post('/delete', 'delete');
+    });
+
+    Route::controller(TrackingController::class)->prefix('tracking')->group(function () {
+        Route::post('/create', 'create');
+        Route::post('/store', 'store');
+        Route::post('/update', 'update');
+        Route::post('/delete', 'delete');
+        Route::post('/send', 'send');
+    });
+
+});
 
 // All
 Route::group(['middleware' => ['auth:sanctum']], function() {
@@ -182,4 +224,15 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
         Route::post('/status', 'status');
     });
 
+    Route::controller(CommentController::class)->prefix('comment')->group(function () {
+        Route::post('/create', 'create');
+        Route::post('/store', 'store');
+        Route::post('/detail', 'detail');
+        Route::post('/status', 'status');
+    });
+
+    Route::controller(ThreadController::class)->prefix('thread')->group(function () {
+        Route::post('/store', 'store');
+        Route::post('/detail', 'detail');
+    });
 });

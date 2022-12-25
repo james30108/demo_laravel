@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\BaseController as BaseController;
 use App\Models\Admin;
 use App\Models\Member;
 use App\Models\Liner;
@@ -12,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Validator;
 use Illuminate\Validation\Rule;
 
-class AuthController extends BaseController
+class AuthController extends Controller
 {
     public function member_register (Request $request)
     {

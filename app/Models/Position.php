@@ -14,6 +14,6 @@ class Position extends Model
         'position_name',
         'position_image',
         'position_match_level',
-        'position_commission',
+        'position_point',
     ];
 }

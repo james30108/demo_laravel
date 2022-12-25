@@ -17,8 +17,8 @@ return new class extends Migration
             $table->id();
             $table->string('position_name')->nullable()->comment('ชื่อตำแหน่ง');
             $table->string('position_image')->nullable()->comment('รูปตำแหน่ง');
-            $table->integer('position_match_level')->default(0)->comment('จำนวนชั้นที่รับค่าคอมมิชชั่น');
-            $table->float('position_commission')->default(0)->comment('คอมมิชชั่นประจำตำแหน่ง');
+            $table->integer('position_match_level')->default(0)->comment('จำนวนชั้นที่รับเงินปันผล');
+            $table->float('position_point')->default(0)->comment('เงินปันผลประจำตำแหน่ง');
             $table->timestamps();
         });
     }

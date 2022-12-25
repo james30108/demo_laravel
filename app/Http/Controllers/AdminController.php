@@ -17,7 +17,7 @@ class AdminController extends BaseController
         $query = $this->filter($query, $request);
 
         // return response
-        return $this->sendResponse($data, "เรียกใช้งานข้อมูลเรียบร้อย");
+        return $this->sendResponse($query, "เรียกใช้งานข้อมูลเรียบร้อย");
     }
 
     // Detail
@@ -32,6 +32,9 @@ class AdminController extends BaseController
 
         // detail
         $query = Admin::find($request->id);
+
+        // Check
+        if ($query == null) return $this->sendError('Error.', "ไม่พบข้อมูลในระบบ");
 
         // response
         return $this->sendResponse($query, "ดึงข้อมูลเรียบร้อย");
@@ -93,7 +96,7 @@ class AdminController extends BaseController
         if($validator->fails()) return $this->sendError('Validation Error.', $validator->errors());
 
         // get data and set status
-        $query      = Member::find($request->id);
+        $query      = Admin::find($request->id);
         $admin_lang = $query->admin_lang == 0 ? 1 : 0;
         $query->update(["admin_lang" => $admin_lang]);
 

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\BaseController as BaseController;
 use Illuminate\Support\Facades\DB;
 use Validator;
 use App\Models\Report;
@@ -11,7 +10,7 @@ use App\Models\ReportDetail;
 use App\Models\Order;
 use App\Models\Point;
 
-class ReportController extends BaseController
+class ReportController extends Controller
 {
     // sale
     public function sale (Request $request)
@@ -106,6 +105,61 @@ class ReportController extends BaseController
                 ["point_member", $report_detail->point_member],
             ])
             ->update(["point_status" => 1]);
+        }
+
+        return $this->sendResponse("Success", "บันทึกข้อมูลเรียบร้อย");
+    }
+
+    // withdraw
+    public function withdraw (Request $request)
+    {
+        $report_round = $this->reportRound(2);
+
+        // validate
+        $validator = Validator::make($request->all(), [
+            'report_create' => 'required',
+        ]);
+
+        if($validator->fails()) return $this->sendError('Validation Error.', $validator->errors());
+
+        // get for sum data
+        $query = Withdraw::where([
+            ["withdraw_cut", 0],
+            ["withdraw_status", 1],
+        ])
+        ->select("*", DB::raw('SUM(withdraw_point) AS sum_point'))
+        ->groupBy("withdraw_member")
+        ->get();
+
+        $report_point = $query->sum("sum_point");
+        $report_count = $query->count();
+
+        if($report_count == 0) return $this->sendError('Error', "ไม่มียอดถอนในรอบนี้");
+
+        // create report
+        $query_2 = Report::create([
+            "report_point" => $report_point,
+            "report_count" => $report_count,
+            "report_round" => $report_round,
+            "report_create" => $request->report_create,
+        ]);
+        $report_id = $query_2->id;
+
+        // get for loop
+        $query_3 = Withdraw::where([
+            ["withdraw_cut", 0],
+            ["withdraw_status", 1],
+        ])
+        ->get();
+
+        foreach ($query_3 as $report_detail) {
+            ReportDetail::create([
+                "report_detail_main"    => $report_id,
+                "report_detail_link"    => $report_detail->withdraw_member,
+                "report_detail_point"   => $report_detail->withdraw_point,
+            ]);
+            Withdraw::find($report_detail->id)->update(["withdraw_cut" => 1]);
+
         }
 
         return $this->sendResponse("Success", "บันทึกข้อมูลเรียบร้อย");

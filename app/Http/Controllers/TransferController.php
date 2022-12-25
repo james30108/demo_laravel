@@ -17,7 +17,7 @@ class TransferController extends BaseController
         $validator = Validator::make($request->all(), [
             'transfer_from'  => 'required',
             'transfer_to'    => 'required',
-            'transfer_money' => 'required|integer',
+            'transfer_money' => 'required|numeric',
         ]);
 
         if($validator->fails()) return $this->sendError('Validation Error.', $validator->errors());

@@ -6,9 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Validator;
 use App\Models\Product;
-use App\Http\Controllers\BaseController as BaseController;
 
-class ProductController extends BaseController
+class ProductController extends Controller
 {
     public static $path = '/images/products/';
 

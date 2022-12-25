@@ -8,7 +8,7 @@ use App\Models\Deposit;
 use App\Models\Member;
 use Validator;
 
-class LinerController extends BaseController
+class DepositController extends BaseController
 {
     public static $path = '/images/deposit/';
 
@@ -18,7 +18,7 @@ class LinerController extends BaseController
         // validate
         $validator = Validator::make($request->all(), [
             'deposit_member'    => 'required',
-            'deposit_money'     => 'required|integer',
+            'deposit_money'     => 'required|numeric',
             'deposit_slip'      => 'image',
         ]);
 
@@ -51,11 +51,10 @@ class LinerController extends BaseController
         // validate
         $validator = Validator::make($request->all(), [
             'id'                => 'required',
-            'deposit_status'    => 'required_with:1,2,3',
+            'deposit_status'    => 'required|in:1,2,3',
         ]);
 
         if($validator->fails()) return $this->sendError('Validation Error.', $validator->errors());
-
 
         // Update Data
         $query = Deposit::find($request->id);
@@ -63,7 +62,6 @@ class LinerController extends BaseController
 
         // If Success
         if ($request->deposit_status == 1) {
-
             Member::find($query->deposit_member)->increment("member_e_wallet", $query->deposit_money);
         }
 
@@ -110,6 +108,9 @@ class LinerController extends BaseController
         if ($query['deposit_slip'] != "") {
             $query['deposit_slip'] = asset(self::$path . $query['deposit_slip']);
         }
+
+        // Check
+        if ($query == null) return $this->sendError('Error.', "ไม่พบข้อมูลในระบบ");
 
         // response
         return $this->sendResponse($query, "ดึงข้อมูลเรียบร้อย");

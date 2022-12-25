@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\File;
 use App\Models\Position;
 use Validator;
 
-class MemberController extends BaseController
+class PositionController extends BaseController
 {
 
     public static $path = '/images/positions/';
@@ -21,24 +21,22 @@ class MemberController extends BaseController
             'position_name'         => 'required|unique:system_position,position_name,NULL,id',
             'position_image'        => 'required|image',
             'position_match_level'  => 'required|integer|unique:system_position,position_match_level,NULL,id',
-            'position_commission'   => 'required|float|unique:system_position,position_commission,NULL,id',
+            'position_point'        => 'required|numeric|unique:system_position,position_point,NULL,id',
         ]);
 
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());
-        }
+        if($validator->fails()) return $this->sendError('Validation Error.', $validator->errors());
 
-        $position_image = $request->file('position_image');
-        $data['product_image_cover']   = time() . "_" . rand() . '.' . $position_image->getClientOriginalExtension();
-        $position_image->move(public_path(self::$path), $data['position_image']);
+        $image          = $request->file('position_image');
+        $position_image = time() . "_" . rand() . '.' . $image->getClientOriginalExtension();
+        $image->move(public_path(self::$path), $position_image);
 
 
         //  detail
         Position::create([
-            "position_name" => $request->position_name,
-            "position_image" => $position_image,
-            "position_match_level" => $request->position_match_level,
-            "position_commission" => $request->position_commission
+            "position_name"         => $request->position_name,
+            "position_image"        => $position_image,
+            "position_match_level"  => $request->position_match_level,
+            "position_point"        => $request->position_point
         ]);
 
         // response
@@ -70,35 +68,31 @@ class MemberController extends BaseController
             'position_name'         => 'required|unique:system_position,position_name,' . $request->id . ',id',
             'position_image'        => 'required|image',
             'position_match_level'  => 'required|integer|unique:system_position,position_match_level,' . $request->id . ',id',
-            'position_commission'   => 'required|float|unique:system_position,position_commission,' . $request->id . ',id',
+            'position_point'        => 'required|numeric|unique:system_position,position_point,' . $request->id . ',id',
         ]);
 
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());
-        }
+        if($validator->fails()) return $this->sendError('Validation Error.', $validator->errors());
 
-        $query          = Product::select($request->position_image)->find($request->id);
-        $position_image = $query->position_image;
+        $query = Position::select("position_image")->find($request->id);
 
         if ($request->hasFile('position_image')) {
             // get data
 
             // delete old file
-            if (File::exists(public_path(self::$path . "/" . $query[$request->position_image]))) {
-                File::delete(public_path(self::$path . "/" . $query[$request->position_image]));
+            if (File::exists(public_path(self::$path . "/" . $query->position_image))) {
+                File::delete(public_path(self::$path . "/" . $query->position_image));
             }
-
-            $position_image = $request->file('position_image');
-            $data['product_image_cover']   = time() . "_" . rand() . '.' . $position_image->getClientOriginalExtension();
-            $position_image->move(public_path(self::$path), $data['position_image']);
+            $image          = $request->file('position_image');
+            $position_image = time() . "_" . rand() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path(self::$path), $position_image);
         }
 
         //  detail
         Position::find($request->id)->update([
-            "position_name" => $request->position_name,
-            "position_image" => $position_image,
-            "position_match_level" => $request->position_match_level,
-            "position_commission" => $request->position_commission
+            "position_name"         => $request->position_name,
+            "position_image"        => $position_image,
+            "position_match_level"  => $request->position_match_level,
+            "position_point"        => $request->position_point
         ]);
 
         // response
